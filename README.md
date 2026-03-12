@@ -33,7 +33,7 @@ Enfin, nous avons créé des issues pour suivre chaque fonctionnalité et chaque
 
 # tests:
 
-### Tests du composant de connexion (Login)
+### Tests frontend – Login
 
 Nous avons mis en place plusieurs tests unitaires sur le composant `Login` (frontend) à l’aide de Vitest et React Testing Library.
 
@@ -50,3 +50,51 @@ Nous avons mis en place plusieurs tests unitaires sur le composant `Login` (fron
 3. **Login échoué (affichage d’un message d’erreur)**  
    Nous testons également le cas où `login` renvoie `{ success: false, error: "Identifiants invalides" }`.  
    Le test soumet le formulaire et vérifie que le message d’erreur correspondant est bien affiché à l’écran.
+
+### Problèmes rencontrés lors des tests Login
+
+- **Problème `useNavigate()`**  
+  Au début, les tests échouaient avec l’erreur :  
+  `useNavigate() may be used only in the context of a <Router> component.`  
+  Le composant `Login` utilise `useNavigate` de React Router, qui nécessite d’être rendu à l’intérieur d’un composant Router.  
+  **Solution** : nous avons modifié les tests pour rendre `Login` à l’intérieur d’un `MemoryRouter` et mocker `useNavigate` lorsque nécessaire.
+
+- **Recherche par placeholder au lieu de label**  
+  Le premier test utilisait `getByPlaceholderText(/email/i)`, alors que les champs du formulaire ne possèdent pas d’attribut `placeholder` mais des labels (`<label htmlFor="email">Email</label>`).  
+  **Solution** : nous avons remplacé ces sélecteurs par `getByLabelText`, ce qui correspond mieux à la structure réelle du formulaire.
+
+---
+
+### Tests backend – API Tasks et Users
+
+Côté backend, nous avons utilisé **Jest** et **Supertest** pour tester l’API Express.
+
+1. **Tests sur `/api/tasks`**
+   - **GET `/api/tasks` sans token → 401**  
+     Vérifie que la route des tâches est protégée par le middleware d’authentification et qu’un appel sans token renvoie bien un statut `401`.
+   - **GET `/api/tasks` avec token → 200 + liste**  
+     À l’aide d’un helper de connexion (`loginAsAdmin`), nous récupérons un token en appelant `/api/auth/login` avec `admin@test.com` / `password`, puis appelons `/api/tasks` avec le header `Authorization: Bearer <token>`.  
+     Le test vérifie que le statut est `200` et que la réponse est un tableau de tâches.
+   - **POST `/api/tasks` sans titre → 400**  
+     Vérifie la validation backend : lorsqu’on envoie une tâche sans champ `title`, l’API renvoie un statut `400` avec le message d’erreur `Le titre est requis`.
+   - **PUT `/api/tasks/:id` inexistant → 404**  
+     Teste la mise à jour d’une tâche qui n’existe pas. Le backend doit répondre avec `404` et le message `Tâche non trouvée`.
+   - **DELETE `/api/tasks/:id` inexistant → 404**  
+     Même logique pour la suppression : suppression d’un id inexistant doit renvoyer `404` et `Tâche non trouvée`.
+
+2. **Tests sur `/api/users`**
+   - **GET `/api/users` avec token → 200 + utilisateurs sans mot de passe**  
+     À partir d’un token admin, nous appelons `/api/users` et vérifions que :
+     - le statut est `200`,
+     - la réponse est un tableau,
+     - les objets utilisateurs ne contiennent pas le champ `password` (le backend filtre les mots de passe avant de renvoyer les données).
+
+### Problèmes rencontrés lors des tests backend
+
+- **“Your test suite must contain at least one test”**  
+  Au tout début, notre fichier de test backend ne contenait encore aucun `it(...)`, ce qui provoquait cette erreur Jest.  
+  **Solution** : ajouter au moins un test (même simple) dans le fichier pour que Jest puisse exécuter la suite.
+
+- **“Cannot find module './helpers' from 'backend/__test__/tasks.test.js'”**  
+  Nous avions ajouté des appels à `require("./helpers")` dans nos tests pour centraliser la logique de connexion (fonction `loginAsAdmin`), mais le fichier `helpers.js` n’existait pas encore dans `backend/__test__/`.  
+  **Solution** : créer un fichier `backend/__test__/helpers.js` qui exporte `app` (le serveur Express) et la fonction `loginAsAdmin` utilisée par tous les tests backend.
