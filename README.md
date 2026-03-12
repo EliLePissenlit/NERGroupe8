@@ -62,7 +62,71 @@ Nous avons mis en place plusieurs tests unitaires sur le composant `Login` (fron
 - **Recherche par placeholder au lieu de label**  
   Le premier test utilisait `getByPlaceholderText(/email/i)`, alors que les champs du formulaire ne possèdent pas d’attribut `placeholder` mais des labels (`<label htmlFor="email">Email</label>`).  
   **Solution** : nous avons remplacé ces sélecteurs par `getByLabelText`, ce qui correspond mieux à la structure réelle du formulaire.
+# Tests frontend – TaskCard
 
+Le composant `TaskCard` représente une tâche individuelle dans le tableau de tâches.
+
+### Affichage des informations d’une tâche
+
+Ce test vérifie que les informations principales d’une tâche sont correctement affichées :
+
+- le titre de la tâche
+- la description
+
+Nous passons une tâche fictive en prop au composant et nous vérifions que ces informations apparaissent bien dans le rendu.
+
+Ce test garantit que le composant affiche correctement les données reçues depuis le backend ou le contexte.
+
+---
+
+# Tests frontend – TaskList
+
+Le composant `TaskList` est responsable de l’affichage des tâches dans différentes colonnes selon leur statut.
+
+### 1. Répartition des tâches par statut
+
+Nous fournissons une liste de tâches contenant différents statuts :
+
+- `todo`
+- `progress`
+- `done`
+
+Le test vérifie que les tâches sont affichées dans les colonnes correspondantes :
+
+- **À faire**
+- **En cours**
+- **Terminé**
+
+### 2. Affichage d’un message lorsqu’une colonne est vide
+
+Si aucune tâche n’est présente pour un statut donné, le composant affiche un message indiquant qu’aucune tâche n’est disponible dans cette catégorie.
+
+Ces tests permettent de vérifier que la logique de filtrage des tâches fonctionne correctement et que l’interface utilisateur reste cohérente même lorsqu’il n’y a pas de données.
+
+---
+
+# Résumé des tests frontend
+
+Les tests unitaires couvrent les principaux composants du frontend :
+
+- `Login`
+- `TaskForm`
+- `TaskCard`
+- `TaskList`
+
+Ils permettent de vérifier :
+
+- le rendu correct des composants
+- les interactions utilisateur (saisie, clic, soumission)
+- les appels aux fonctions du contexte
+- la gestion des erreurs et des états.
+
+## Exécution des tests
+
+Les tests sont exécutés avec la commande suivante :
+
+```bash
+npm test
 ---
 
 ### Tests backend – API Tasks et Users
@@ -152,4 +216,3 @@ Certaines exécutions apparaissent encore en échec car les **tests ne sont pas 
   Nous avions ajouté des appels à `require("./helpers")` dans nos tests pour centraliser la logique de connexion (fonction `loginAsAdmin`), mais le fichier `helpers.js` n’existait pas encore dans `backend/__test__/`.  
 
   **Solution** : créer un fichier `backend/__test__/helpers.js` qui exporte `app` (le serveur Express) et la fonction `loginAsAdmin` utilisée par tous les tests backend.
-
