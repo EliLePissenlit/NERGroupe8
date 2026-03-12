@@ -96,7 +96,7 @@ Côté backend, nous avons utilisé **Jest** et **Supertest** pour tester l’AP
   **Solution** : ajouter au moins un test (même simple) dans le fichier pour que Jest puisse exécuter la suite.
 
 
-## Partie DevOps
+## Partie DevOps (Rayane Belkassi)
 
 Dans ce projet, je me suis occupé de la partie DevOps.
 Mon objectif était de mettre en place un pipeline CI afin d’automatiser certaines vérifications du projet.
@@ -127,3 +127,4 @@ Certaines exécutions apparaissent encore en échec car les **tests ne sont pas 
   Nous avions ajouté des appels à `require("./helpers")` dans nos tests pour centraliser la logique de connexion (fonction `loginAsAdmin`), mais le fichier `helpers.js` n’existait pas encore dans `backend/__test__/`.  
 
   **Solution** : créer un fichier `backend/__test__/helpers.js` qui exporte `app` (le serveur Express) et la fonction `loginAsAdmin` utilisée par tous les tests backend.
+
