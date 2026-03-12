@@ -45,4 +45,15 @@ describe("Tasks API", () => {
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("error", "Tâche non trouvée");
   });
+
+  it("renvoie 404 sur DELETE /api/tasks/:id pour une tâche inexistante", async () => {
+    const token = await loginAsAdmin();
+  
+    const res = await request(app)
+      .delete("/api/tasks/does-not-exist")
+      .set("Authorization", `Bearer ${token}`);
+  
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty("error", "Tâche non trouvée");
+  });
 });
