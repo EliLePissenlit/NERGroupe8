@@ -95,6 +95,31 @@ Côté backend, nous avons utilisé **Jest** et **Supertest** pour tester l’AP
   Au tout début, notre fichier de test backend ne contenait encore aucun `it(...)`, ce qui provoquait cette erreur Jest.  
   **Solution** : ajouter au moins un test (même simple) dans le fichier pour que Jest puisse exécuter la suite.
 
+### Problèmes rencontrés lors des tests backend
+
+- **“Your test suite must contain at least one test”**  
+  Au départ, notre fichier de tests backend était créé mais ne contenait encore aucun `it(...)`, ce qui provoquait cette erreur Jest.  
+  **Solution** : ajouter au moins un test (même simple) dans le fichier afin que Jest puisse exécuter la suite.
+
+- **“Cannot find module './helpers' from 'backend/__test__/tasks.test.js'”**  
+  Nous avions modifié nos tests pour factoriser la logique de connexion dans un module `helpers`, mais ce fichier n’existait pas encore. Le fichier de test essayait donc de faire `require("./helpers")` vers un module introuvable.  
+  **Solution** : création de `backend/__test__/helpers.js` exportant `app` (l’instance Express) et la fonction `loginAsAdmin`, désormais utilisée par tous les tests backend.
+
+### Tests E2E avec Selenium
+
+Nous avons mis en place un test E2E avec Selenium dans `tests/e2e/selenium/login.e2e.js`.  
+Ce test ouvre un navigateur Chrome, se rend sur `http://localhost:3000`, remplit le formulaire de connexion avec `admin@test.com` / `password`, clique sur **“Se connecter”** et vérifie que la redirection vers le tableau de bord fonctionne.
+
+Pour exécuter ce test :
+
+1. Lancer le backend :  
+   `cd backend && npm run dev`
+2. Lancer le frontend :  
+   `cd frontend && npm start`
+3. Lancer le test Selenium :  
+   `cd tests/e2e/selenium && npm run e2e:login`
+
+Ce scénario valide de bout en bout l’enchaînement frontend + backend (authentification et navigation jusqu’au dashboard).
 
 ## Partie DevOps (Rayane Belkassi)
 
