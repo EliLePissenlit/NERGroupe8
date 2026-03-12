@@ -56,4 +56,21 @@ describe("Tasks API", () => {
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("error", "Tâche non trouvée");
   });
+
+  const request = require("supertest");
+const { app, loginAsAdmin } = require("./helpers");
+
+describe("Users API", () => {
+  it("renvoie la liste des utilisateurs sans les mots de passe", async () => {
+    const token = await loginAsAdmin();
+
+    const res = await request(app)
+      .get("/api/users")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body[0]).not.toHaveProperty("password");
+  });
+});
 });
