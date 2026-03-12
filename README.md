@@ -95,6 +95,35 @@ Côté backend, nous avons utilisé **Jest** et **Supertest** pour tester l’AP
   Au tout début, notre fichier de test backend ne contenait encore aucun `it(...)`, ce qui provoquait cette erreur Jest.  
   **Solution** : ajouter au moins un test (même simple) dans le fichier pour que Jest puisse exécuter la suite.
 
+
+## Partie DevOps
+
+Dans ce projet, je me suis occupé de la partie DevOps.
+Mon objectif était de mettre en place un pipeline CI afin d’automatiser certaines vérifications du projet.
+
+J’ai configuré un workflow GitHub Actions situé dans le dossier `.github/workflows/ci.yml`.
+Ce pipeline se déclenche automatiquement lorsqu’il y a un **push** ou une **Pull Request** vers la branche `main`.
+
+Le pipeline effectue plusieurs étapes :
+
+* installation des dépendances du **backend** et du **frontend**
+* vérification du code avec **ESLint**
+* exécution des tests si des tests sont présents
+
+J’ai également configuré **ESLint** pour le backend et le frontend afin de détecter les erreurs de code ou les problèmes de syntaxe.
+
+### Problèmes rencontrés
+
+Pendant la mise en place, plusieurs difficultés sont apparues :
+
+* conflits de dépendances lors de l’installation d’ESLint sur le frontend
+* certaines erreurs détectées par ESLint dans le code (variables inutilisées, règles React, indentation)
+* ajustements nécessaires dans le fichier `ci.yml` pour gérer correctement les dossiers `backend` et `frontend`
+
+Actuellement, le pipeline fonctionne correctement et se lance automatiquement.
+Certaines exécutions apparaissent encore en échec car les **tests ne sont pas encore complètement implémentés** par la partie Tests du projet.
+
 - **“Cannot find module './helpers' from 'backend/__test__/tasks.test.js'”**  
   Nous avions ajouté des appels à `require("./helpers")` dans nos tests pour centraliser la logique de connexion (fonction `loginAsAdmin`), mais le fichier `helpers.js` n’existait pas encore dans `backend/__test__/`.  
+
   **Solution** : créer un fichier `backend/__test__/helpers.js` qui exporte `app` (le serveur Express) et la fonction `loginAsAdmin` utilisée par tous les tests backend.
